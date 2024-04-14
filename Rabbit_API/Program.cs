@@ -1,6 +1,21 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Rabbit_API.Data;
+using Rabbit_API.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//sql
+builder.Services.AddDbContext<ApplicationDbContext>(option =>
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+});
+//identity
+ 
+//Repository
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
