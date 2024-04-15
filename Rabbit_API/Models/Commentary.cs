@@ -7,10 +7,14 @@ namespace Rabbit_API.Models
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey("Post")]
-        public int PostId { get; set; }
         [Required]
         public string Content { get; set; }
 
+        //[ForeignKey("Posts")]
+        public Post? Post { get; set; }
+        public int? PostId { get; set; }
+        //[ForeignKey("Users")]
+        public User? User { get; set; }
+        public int? UserId { get; set; }
     }
 }

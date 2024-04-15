@@ -11,7 +11,13 @@ namespace Rabbit_API.Models
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
-        [ForeignKey("Thread")]
-        public int ThreadId { get; set; }
+        //[ForeignKey("Threads")]
+        public Thread? Thread { get; set; }
+        public int? ThreadId { get; set; }
+
+        //[ForeignKey("Users")]
+        public User? User { get; set; }
+        public int? UserId { get; set; }
+
     }
 }
