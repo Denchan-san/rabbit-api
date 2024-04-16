@@ -13,6 +13,7 @@ namespace Rabbit_API.Models
         [Required]
         public string Password { get; set; }
         public Commentary? Commentary { get; set; }
+        public string AvatarUrl { get; set; }
 
     }
 }
