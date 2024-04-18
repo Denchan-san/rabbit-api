@@ -8,6 +8,7 @@ namespace Rabbit_API
         public MappingConfig() {
 
             CreateMap<Models.Thread, ThreadDTO>().ReverseMap();
+            CreateMap<Models.Thread, CreateThreadDTO>().ReverseMap();
 
         }
     }

@@ -72,7 +72,7 @@ namespace Rabbit_API.Controllers
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
-                _response.Result = _mapper.Map<ThreadDTO>(thread); 
+                _response.Result = _mapper.Map<ThreadDTO>(thread);
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
@@ -87,15 +87,37 @@ namespace Rabbit_API.Controllers
             return _response;
         }
 
-        /*[HttpPost]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateThread(ThreadDTO thread)
+        public async Task<ActionResult<APIResponse>> CreateThread([FromBody] CreateThreadDTO createDTO)
         {
+            try
+            {
+                //if (await _dbThread.GetAsync(u => u.ID == createDTO.ID != null))
+                if (createDTO == null) return BadRequest(createDTO);
 
-        }*/
+                Models.Thread thread = _mapper.Map<Models.Thread>(createDTO);
+
+                await _dbThread.CreateAsync(thread);
+
+                _response.Result = _mapper.Map<ThreadDTO>(thread);
+                _response.StatusCode = HttpStatusCode.Created;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                    = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+        
 
     }
 }
