@@ -15,6 +15,8 @@ namespace Rabbit_API.Models
         //[ForeignKey("ChildCommentaryId")]
         public Commentary? ChildCommentary { get; set; }
         public int? ChildCommentaryId { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
 
     }
 }

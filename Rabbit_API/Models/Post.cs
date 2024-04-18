@@ -18,6 +18,8 @@ namespace Rabbit_API.Models
         //[ForeignKey("Users")]
         public User? User { get; set; }
         public int? UserId { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
 
     }
 }
