@@ -1,4 +1,4 @@
-﻿namespace Rabbit_API.Models.Dto
+﻿namespace Rabbit_API.Models.Dto.Users
 {
     public class UserDTO
     {

@@ -1,4 +1,5 @@
 ﻿using Rabbit_API.Models.Dto;
+using Rabbit_API.Models.Dto.Users;
 
 namespace Rabbit_API.Repository.IRepository
 {
