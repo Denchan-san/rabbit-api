@@ -1,23 +1,23 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Rabbit_API.Models;
-using Rabbit_API.Models.Dto.Threads;
+using Rabbit_API.Models.Dto.Posts;
 using Rabbit_API.Repository.IRepository;
 using System.Net;
 
 namespace Rabbit_API.Controllers
 {
-    [Route("api/Threads")]
+    [Route("api/Posts")]
     [ApiController]
-    public class ThreadController : Controller
+    public class PostController : Controller
     {
         protected APIResponse _response;
-        private readonly IThreadRepository _dbThread;
+        private readonly IPostRepository _dbPost;
         private readonly IMapper _mapper;
 
-        public ThreadController(IThreadRepository dbThread, IMapper mapper)
+        public PostController(IPostRepository dbPost, IMapper mapper)
         {
-            _dbThread = dbThread;
+            _dbPost = dbPost;
             _mapper = mapper;
             _response = new APIResponse();
         }
@@ -27,15 +27,15 @@ namespace Rabbit_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetThreads()
+        public async Task<ActionResult<APIResponse>> GetPosts()
         {
             try
             {
-                IEnumerable<Models.Thread> threadList;
+                List<Post> postList;
 
-                threadList = await _dbThread.GetAllAsync();
+                postList = await _dbPost.GetAllAsync();
 
-                _response.Result = _mapper.Map<List<ThreadDTO>>(threadList);
+                _response.Result = _mapper.Map<List<PostDTO>>(postList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -48,41 +48,40 @@ namespace Rabbit_API.Controllers
             return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetThread")]
+        [HttpGet("{id:int}", Name = "GetPost")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetThread(int id)
+        public async Task<ActionResult<APIResponse>> GetPost(int id)
         {
             try
             {
-                if (id <= 0)
+                if(id <= 0)
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
 
-                Models.Thread thread = await _dbThread.GetAsync(item => item.ID == id);
+                Post post = await _dbPost.GetAsync(item => item.Id == id);
 
-                if (thread == null)
+                if(post == null)
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
-                _response.Result = _mapper.Map<ThreadDTO>(thread);
+                _response.Result = _mapper.Map<PostDTO>(post);
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
-
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages
-                    = new List<string>() { ex.ToString() };
+                    = new List<string> { ex.ToString() };
             }
             return _response;
         }
@@ -92,18 +91,18 @@ namespace Rabbit_API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateThread([FromBody] CreateThreadDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreatePost([FromBody] CreatePostDTO createDTO)
         {
             try
             {
-                if (createDTO == null) return BadRequest(createDTO);
+                if (createDTO == null) return BadRequest(_response);
 
-                Models.Thread thread = _mapper.Map<Models.Thread>(createDTO);
+                Post post = _mapper.Map<Post>(createDTO);
 
-                await _dbThread.CreateAsync(thread);
+                await _dbPost.CreateAsync(post);
 
-                _response.Result = _mapper.Map<ThreadDTO>(thread);
-                _response.StatusCode = HttpStatusCode.Created;
+                _response.Result = _mapper.Map<Post>(createDTO);
+                _response.StatusCode= HttpStatusCode.Created;
 
                 return Ok(_response);
             }
@@ -113,62 +112,66 @@ namespace Rabbit_API.Controllers
                 _response.ErrorMessages
                     = new List<string>() { ex.ToString() };
             }
-            return _response;
+            return _response; 
         }
 
-        [HttpPut("{id:int}", Name = "UpdateThread")]
+        [HttpPut("{id:int}", Name = "UpdatePost")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateThread(int id, [FromBody] UpdateThreadDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> UpdatePost(int id, [FromBody] UpdatePostDTO updateDTO)
         {
             try
             {
-                if (updateDTO == null) return BadRequest(updateDTO);
+                if (updateDTO == null) return BadRequest(_response);
 
-                //var thread = await _dbThread.GetAsync(u => u.ID == id);
+                var prevPost = await _dbPost.GetAsync(u => u.Id == id);
+                if (prevPost == null) return NotFound(_response);
 
-                //UpdateThreadDTO threadDTO = _mapper.Map<UpdateThreadDTO>(thread);
+                // Detach the existing entity
+                _dbPost.Detach(prevPost);
 
-                //if (thread == null) return NotFound();
+                Post updatedPost = _mapper.Map<Post>(updateDTO);
 
-                Models.Thread model = _mapper.Map<Models.Thread>(updateDTO);
-                await _dbThread.UpdateAsync(model);
+                // Preserve existing navigation properties
+                updatedPost.UserId = prevPost.UserId;
+                updatedPost.ThreadId = prevPost.ThreadId;
+
+                await _dbPost.UpdateAsync(updatedPost); //thats line 133
 
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
-
                 return Ok(_response);
-
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages
-                    = new List<string>() { ex.ToString() };
+                    =new List<string>() { ex.ToString() };
             }
             return _response;
         }
 
-        [HttpDelete("{id:int}", Name = "DeleteThread")]
+        [HttpDelete("{id:int}", Name = "DeletePost")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> DeleteThread(int id)
+        public async Task<ActionResult<APIResponse>> DeletePost(int id)
         {
             try
             {
-                if (id <= 0)
+                if(id <= 0)
                 {
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var thread = await _dbThread.GetAsync(u => u.ID == id);
-                if (thread == null) return NotFound();
 
-                await _dbThread.RemoveAsync(thread);
+                var post = await _dbPost.GetAsync(u => u.Id == id);
+                if (post == null) return NotFound(_response);
+
+                await _dbPost.RemoveAsync(post);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 return Ok(_response);
@@ -177,10 +180,9 @@ namespace Rabbit_API.Controllers
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages
-                    = new List<string> { ex.ToString() };
+                    =new List<string> { ex.ToString() };
             }
             return _response;
-
         }
     }
 }

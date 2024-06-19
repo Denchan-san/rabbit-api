@@ -10,11 +10,11 @@ namespace Rabbit_API.Repository.IRepository
 
         public bool isUniqueUser(string username)
         {
-            var user = _db.ApplicationUsers.FirstOrDefault(x => x.UserName == username);
-            if (user == null)
-            {
-                return true;
-            }
+            //var user = _db.ApplicationUsers.FirstOrDefault(x => x.UserName == username);
+            //if (user == null)
+            //{
+            //    return true;
+            //}
             return false;
         }
 
