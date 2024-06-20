@@ -96,9 +96,16 @@ namespace Rabbit_API.Controllers
         {
             try
             {
-                if (createDTO == null) return BadRequest(createDTO);
+                if (createDTO == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
 
                 Models.Thread thread = _mapper.Map<Models.Thread>(createDTO);
+
+                thread.UpdatedDate = DateTime.UtcNow;
+                thread.CreatedDate = DateTime.UtcNow;
 
                 await _dbThread.CreateAsync(thread);
 
@@ -123,16 +130,24 @@ namespace Rabbit_API.Controllers
         {
             try
             {
-                if (updateDTO == null) return BadRequest(updateDTO);
+                if (updateDTO == null || id <= 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
 
-                //var thread = await _dbThread.GetAsync(u => u.ID == id);
+                var prevThread = await _dbThread.GetAsync(u => u.ID == id);
+                if (prevThread == null) return NotFound();
 
-                //UpdateThreadDTO threadDTO = _mapper.Map<UpdateThreadDTO>(thread);
-
-                //if (thread == null) return NotFound();
+                _dbThread.Detach(prevThread);
 
                 Models.Thread model = _mapper.Map<Models.Thread>(updateDTO);
-                await _dbThread.UpdateAsync(model);
+
+                model.UserId = prevThread.UserId;
+                model.CreatedDate = prevThread.CreatedDate;
+                model.UpdatedDate = DateTime.UtcNow;
+
+                await _dbThread.UpdateAsync(model); 
 
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 

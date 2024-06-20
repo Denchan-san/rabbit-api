@@ -1,4 +1,6 @@
-﻿using Rabbit_API.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Rabbit_API.Data;
+using Rabbit_API.Models;
 using Rabbit_API.Repository.IRepository;
 
 namespace Rabbit_API.Repository
@@ -16,6 +18,15 @@ namespace Rabbit_API.Repository
             _db.Threads.Update(entity);
             await _db.SaveChangesAsync();
             return entity;
+        }
+
+        public void Detach(Models.Thread entity)
+        {
+            var entry = _db.Entry(entity);
+            if (entry != null)
+            {
+                entry.State = EntityState.Detached;
+            }
         }
     }
 }

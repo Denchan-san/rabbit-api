@@ -1,8 +1,9 @@
 ﻿using Rabbit_API.Data;
 using Rabbit_API.Models.Dto;
 using Rabbit_API.Models.Dto.Users;
+using Rabbit_API.Repository.IRepository;
 
-namespace Rabbit_API.Repository.IRepository
+namespace Rabbit_API.Repository
 {
     public class UserRepository : IUserRepository
     {

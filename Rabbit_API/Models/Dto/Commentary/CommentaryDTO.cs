@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Rabbit_API.Models
+namespace Rabbit_API.Models.Dto.Commentary
 {
-    public class Commentary
+    public class CommentaryDTO
     {
         [Key]
         public int Id { get; set; }
@@ -14,7 +14,5 @@ namespace Rabbit_API.Models
         //[ForeignKey("Users")]
         public User? User { get; set; }
         public int? UserId { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }
     }
 }

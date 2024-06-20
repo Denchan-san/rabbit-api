@@ -1,23 +1,23 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Rabbit_API.Models;
-using Rabbit_API.Models.Dto.Posts;
+using Rabbit_API.Models.Dto.Commentary;
 using Rabbit_API.Repository.IRepository;
 using System.Net;
 
 namespace Rabbit_API.Controllers
 {
-    [Route("api/Posts")]
+    [Route("api/Commentary")]
     [ApiController]
-    public class PostController : Controller
+    public class CommentaryController : Controller
     {
         protected APIResponse _response;
-        private readonly IPostRepository _dbPost;
+        private readonly ICommentaryRepository _dbCommentary;
         private readonly IMapper _mapper;
 
-        public PostController(IPostRepository dbPost, IMapper mapper)
+        public CommentaryController(ICommentaryRepository dbCommentary, IMapper mapper)
         {
-            _dbPost = dbPost;
+            _dbCommentary = dbCommentary;
             _mapper = mapper;
             _response = new APIResponse();
         }
@@ -27,33 +27,39 @@ namespace Rabbit_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetPosts()
+        public async Task<ActionResult<APIResponse>> GetCommentaries()
         {
             try
             {
-                List<Post> postList;
+                List<Commentary> commentary = await _dbCommentary.GetAllAsync();
 
-                postList = await _dbPost.GetAllAsync();
+                if (commentary == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
 
-                _response.Result = _mapper.Map<List<PostDTO>>(postList);
+                _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = _mapper.Map<List<CommentaryDTO>>(commentary);
+
                 return Ok(_response);
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages
-                    = new List<string>() { ex.ToString() };
+                    = new List<string>() { ex.Message };
             }
             return _response;
         }
 
-        [HttpGet("{id:int}", Name = "GetPost")]
+        [HttpGet("{id:int}", Name = "GetCommentary")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> GetPost(int id)
+        public async Task<ActionResult<APIResponse>> GetCommentary(int id)
         {
             try
             {
@@ -63,24 +69,20 @@ namespace Rabbit_API.Controllers
                     return BadRequest(_response);
                 }
 
-                Post post = await _dbPost.GetAsync(item => item.Id == id);
+                Commentary commentary = await _dbCommentary.GetAsync(u => u.Id == id);
 
-                if (post == null)
-                {
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    return NotFound(_response);
-                }
-                _response.Result = _mapper.Map<PostDTO>(post);
+                if (commentary == null) return NotFound();
+
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
+
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages
-                    = new List<string> { ex.ToString() };
+                    = new List<string>() { ex.Message };
             }
             return _response;
         }
@@ -90,7 +92,7 @@ namespace Rabbit_API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreatePost([FromBody] CreatePostDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateCommentary([FromBody] CreateCommentaryDTO createDTO)
         {
             try
             {
@@ -100,15 +102,14 @@ namespace Rabbit_API.Controllers
                     return BadRequest(_response);
                 }
 
-                Post post = _mapper.Map<Post>(createDTO);
-                post.CreatedDate = DateTime.UtcNow;
-                post.UpdatedDate = DateTime.UtcNow;
+                Commentary commentary = _mapper.Map<Commentary>(createDTO);
+                commentary.CreatedDate = DateTime.UtcNow;
+                commentary.UpdatedDate = DateTime.UtcNow;
 
-                await _dbPost.CreateAsync(post);
+                await _dbCommentary.CreateAsync(commentary);
 
-                _response.Result = _mapper.Map<Post>(createDTO);
+                _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.Created;
-
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -120,10 +121,10 @@ namespace Rabbit_API.Controllers
             return _response;
         }
 
-        [HttpPut("{id:int}", Name = "UpdatePost")]
+        [HttpPut("{id:int}", Name = "UpdateCommentary")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdatePost(int id, [FromBody] UpdatePostDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateCommentary(int id, [FromBody] UpdateCommentaryDTO updateDTO)
         {
             try
             {
@@ -133,24 +134,23 @@ namespace Rabbit_API.Controllers
                     return BadRequest(_response);
                 }
 
-                var prevPost = await _dbPost.GetAsync(u => u.Id == id);
+                var prevCommentary = await _dbCommentary.GetAsync(u => u.Id == id);
 
-                if (prevPost == null) return NotFound(_response);
+                if (prevCommentary == null) return NotFound();
 
-                // Detach the existing entity
-                _dbPost.Detach(prevPost);
+                Commentary updatedCommentary = _mapper.Map<Commentary>(updateDTO);
 
-                Post updatedPost = _mapper.Map<Post>(updateDTO);
+                updatedCommentary.UserId = prevCommentary.UserId;
+                updatedCommentary.PostId = prevCommentary.PostId;
+                updatedCommentary.CreatedDate = prevCommentary.CreatedDate;
+                updatedCommentary.UpdatedDate = DateTime.UtcNow;
 
-                updatedPost.UserId = prevPost.UserId;
-                updatedPost.ThreadId = prevPost.ThreadId;
-
-                await _dbPost.UpdateAsync(updatedPost);
+                await _dbCommentary.UpdateAsync(updatedCommentary);
 
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -162,12 +162,12 @@ namespace Rabbit_API.Controllers
             return _response;
         }
 
-        [HttpDelete("{id:int}", Name = "DeletePost")]
+        [HttpDelete("{id:int}", Name = "DeleteCommentary")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> DeletePost(int id)
+        public async Task<ActionResult<APIResponse>> DeleteCommentary(int id)
         {
             try
             {
@@ -177,19 +177,24 @@ namespace Rabbit_API.Controllers
                     return BadRequest(_response);
                 }
 
-                var post = await _dbPost.GetAsync(u => u.Id == id);
-                if (post == null) return NotFound(_response);
+                var commentary = await _dbCommentary.GetAsync(u => u.Id == id);
+                if (commentary == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
 
-                await _dbPost.RemoveAsync(post);
-                _response.StatusCode = HttpStatusCode.OK;
+                await _dbCommentary.RemoveAsync(commentary);
+
                 _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages
-                    = new List<string> { ex.ToString() };
+                    = new List<string>() { ex.ToString() };
             }
             return _response;
         }
