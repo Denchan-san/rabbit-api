@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rabbit_API.Data;
 
@@ -11,9 +12,11 @@ using Rabbit_API.Data;
 namespace Rabbit_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240625151438_AddRowContentToReply")]
+    partial class AddRowContentToReply
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,16 +121,11 @@ namespace Rabbit_API.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
                     b.HasIndex("ChildCommentaryId");
 
                     b.HasIndex("ParentalCommentaryId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Replies");
                 });
@@ -239,15 +237,9 @@ namespace Rabbit_API.Migrations
                         .WithMany()
                         .HasForeignKey("ParentalCommentaryId");
 
-                    b.HasOne("Rabbit_API.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
                     b.Navigation("ChildCommentary");
 
                     b.Navigation("ParentalCommentary");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Rabbit_API.Models.Thread", b =>

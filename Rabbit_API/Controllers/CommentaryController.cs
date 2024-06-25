@@ -75,6 +75,7 @@ namespace Rabbit_API.Controllers
 
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = _mapper.Map<CommentaryDTO>(commentary);
                 return Ok(_response);
 
             }

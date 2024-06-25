@@ -21,6 +21,10 @@ namespace Rabbit_API
             CreateMap<Commentary, CommentaryDTO>().ReverseMap();
             CreateMap<Commentary, CreateCommentaryDTO>().ReverseMap();
             CreateMap<Commentary, UpdateCommentaryDTO>().ReverseMap();
+            
+            CreateMap<Reply, ReplyDTO>().ReverseMap();
+            CreateMap<Reply, CreateReplyDTO>().ReverseMap();
+            CreateMap<Reply, UpdateReplyDTO>().ReverseMap();
         }
     }
 }
