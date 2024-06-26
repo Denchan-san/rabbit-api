@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 builder.Services.AddScoped<IThreadRepository, ThreadRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentaryRepository, CommentaryRepository>();
+builder.Services.AddScoped<IReplyRepository, ReplyRepository>();
 //Automapper
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
