@@ -15,7 +15,7 @@ namespace Rabbit_API.Models.Dto.Posts
         public Thread? Thread { get; set; }
         public int? ThreadId { get; set; }
         //[ForeignKey("Users")]
-        public User? User { get; set; }
+        public LocalUser? User { get; set; }
         public int? UserId { get; set; }
     }
 }

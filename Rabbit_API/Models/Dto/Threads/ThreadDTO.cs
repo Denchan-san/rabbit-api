@@ -12,7 +12,7 @@ namespace Rabbit_API.Models.Dto.Threads
         [Required]
         public string Description { get; set; }
         //public string? ImageUrl { get; set; }
-        public User? User { get; set; }
+        public LocalUser? User { get; set; }
         public int? UserId { get; set; }
     }
 }
