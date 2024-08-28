@@ -29,9 +29,9 @@ namespace Rabbit_API.Repository
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
         }
 
-        public bool isUniqueUser(string username)
+        public bool isUniqueUser(string email)
         {
-            var user = _db.ApplicationUsers.FirstOrDefault(x => x.Name == username);
+            var user = _db.ApplicationUsers.FirstOrDefault(x => x.Email == email);
             if (user == null)
             {
                 return true;
@@ -42,7 +42,7 @@ namespace Rabbit_API.Repository
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
             var user = _db.ApplicationUsers
-                .FirstOrDefault(u => u.UserName == loginRequestDTO.UserName.ToLower());
+                .FirstOrDefault(u => u.Email == loginRequestDTO.Email.ToLower());
 
             bool isVlaid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
@@ -64,7 +64,7 @@ namespace Rabbit_API.Repository
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.UserName.ToString()),
+                    new Claim(ClaimTypes.Name, user.Email.ToString()),
                     new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
