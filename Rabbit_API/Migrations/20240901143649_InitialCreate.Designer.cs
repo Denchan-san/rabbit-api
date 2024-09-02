@@ -12,8 +12,8 @@ using Rabbit_API.Data;
 namespace Rabbit_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240621154233_RemoveUniqueConstraintFromUserId")]
-    partial class RemoveUniqueConstraintFromUserId
+    [Migration("20240901143649_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,62 @@ namespace Rabbit_API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Rabbit_API.Models.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApplicationUsers");
+                });
 
             modelBuilder.Entity("Rabbit_API.Models.Commentary", b =>
                 {
@@ -53,11 +109,39 @@ namespace Rabbit_API.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
-
                     b.ToTable("Commentaries");
+                });
+
+            modelBuilder.Entity("Rabbit_API.Models.LocalUser", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("AvatarUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("LocalUsers");
                 });
 
             modelBuilder.Entity("Rabbit_API.Models.Post", b =>
@@ -108,6 +192,10 @@ namespace Rabbit_API.Migrations
                     b.Property<int?>("ChildCommentaryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -117,11 +205,16 @@ namespace Rabbit_API.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.HasIndex("ChildCommentaryId");
 
                     b.HasIndex("ParentalCommentaryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Replies");
                 });
@@ -161,51 +254,13 @@ namespace Rabbit_API.Migrations
                     b.ToTable("Threads");
                 });
 
-            modelBuilder.Entity("Rabbit_API.Models.User", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("AvatarUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("Rabbit_API.Models.Commentary", b =>
                 {
                     b.HasOne("Rabbit_API.Models.Post", "Post")
                         .WithMany()
                         .HasForeignKey("PostId");
 
-                    b.HasOne("Rabbit_API.Models.User", "User")
-                        .WithOne("Commentary")
-                        .HasForeignKey("Rabbit_API.Models.Commentary", "UserId");
-
                     b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Rabbit_API.Models.Post", b =>
@@ -214,7 +269,7 @@ namespace Rabbit_API.Migrations
                         .WithMany()
                         .HasForeignKey("ThreadId");
 
-                    b.HasOne("Rabbit_API.Models.User", "User")
+                    b.HasOne("Rabbit_API.Models.LocalUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
@@ -233,23 +288,24 @@ namespace Rabbit_API.Migrations
                         .WithMany()
                         .HasForeignKey("ParentalCommentaryId");
 
+                    b.HasOne("Rabbit_API.Models.LocalUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("ChildCommentary");
 
                     b.Navigation("ParentalCommentary");
-                });
-
-            modelBuilder.Entity("Rabbit_API.Models.Thread", b =>
-                {
-                    b.HasOne("Rabbit_API.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Rabbit_API.Models.User", b =>
+            modelBuilder.Entity("Rabbit_API.Models.Thread", b =>
                 {
-                    b.Navigation("Commentary");
+                    b.HasOne("Rabbit_API.Models.LocalUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,7 @@ using Rabbit_API.Models;
 using Rabbit_API.Models.Dto.Commentary;
 using Rabbit_API.Models.Dto.Posts;
 using Rabbit_API.Models.Dto.Threads;
+using Rabbit_API.Models.Dto.Users;
 
 namespace Rabbit_API
 {
@@ -25,6 +26,8 @@ namespace Rabbit_API
             CreateMap<Reply, ReplyDTO>().ReverseMap();
             CreateMap<Reply, CreateReplyDTO>().ReverseMap();
             CreateMap<Reply, UpdateReplyDTO>().ReverseMap();
+
+            CreateMap<ApplicationUser, UserDTO>().ReverseMap();
         }
     }
 }

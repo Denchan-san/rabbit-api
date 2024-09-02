@@ -44,7 +44,7 @@ namespace Rabbit_API.Controllers
             {
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("Username already exists!");
+                _response.ErrorMessages.Add("Email already registered!");
                 return BadRequest(_response);
             }
 

@@ -46,7 +46,7 @@ namespace Rabbit_API.Repository
 
             bool isVlaid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
-            if(user == null || isVlaid == false)
+            if (user == null || isVlaid == false)
             {
                 return new LoginResponseDTO()
                 {
@@ -56,7 +56,7 @@ namespace Rabbit_API.Repository
             }
 
             //if user was found generate JWT Token
-            var roles = await _userManager.GetRolesAsync(user);
+            //var roles = await _userManager.GetRolesAsync(user);
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
 
@@ -65,7 +65,7 @@ namespace Rabbit_API.Repository
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.Email.ToString()),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
+                    //new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 //Expires = DateTime.UtcNow.AddMinutes(7),
@@ -82,9 +82,47 @@ namespace Rabbit_API.Repository
             return loginResponseDTO;
         }
 
-        public Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO)
+        public async Task<UserDTO> Register(RegistrationRequestDTO registrationRequestDTO)
         {
-            throw new NotImplementedException();
+            ApplicationUser user = new()
+            {
+                Email = registrationRequestDTO.Email,
+                NormalizedEmail = registrationRequestDTO.Email.ToUpper(),
+                UserName = registrationRequestDTO.Name
+            };
+
+            try
+            {
+                var result = await _userManager.CreateAsync(user, registrationRequestDTO.Password);
+                if (result.Succeeded)
+                {
+                    var userToReturn = _db.ApplicationUsers
+                        .FirstOrDefault(u => u.Email == registrationRequestDTO.Email);
+                    if (userToReturn == null)
+                    {
+                        Console.Error.WriteLine($"Error: USERTORETURN IS NULL!");
+
+                    }
+                    return _mapper.Map<UserDTO>(userToReturn);
+                }
+                else
+                {
+                    // Логування помилки
+                    foreach (var error in result.Errors)
+                    {
+                        Console.Error.WriteLine($"Error: {error.Code} - {error.Description}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.Error.WriteLine($"Exception occurred: {ex.Message}");
+
+            }
+
+            return null;
         }
+
     }
 }
