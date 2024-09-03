@@ -56,7 +56,6 @@ namespace Rabbit_API.Repository
             }
 
             //if user was found generate JWT Token
-            //var roles = await _userManager.GetRolesAsync(user);
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
 
@@ -65,10 +64,8 @@ namespace Rabbit_API.Repository
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.Email.ToString()),
-                    //new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                //Expires = DateTime.UtcNow.AddMinutes(7),
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -87,9 +84,13 @@ namespace Rabbit_API.Repository
             ApplicationUser user = new()
             {
                 Email = registrationRequestDTO.Email,
+                UserName = registrationRequestDTO.Email,  // Використовуйте Email як UserName
                 NormalizedEmail = registrationRequestDTO.Email.ToUpper(),
-                UserName = registrationRequestDTO.Name
+                NormalizedUserName = registrationRequestDTO.Email.ToUpper(), // Використовуйте нормалізований Email
+                Name = registrationRequestDTO.Name,
+                AvatarUrl = registrationRequestDTO.AvatarUrl
             };
+
 
             try
             {
