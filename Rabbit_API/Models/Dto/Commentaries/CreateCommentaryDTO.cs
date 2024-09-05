@@ -7,6 +7,6 @@ namespace Rabbit_API.Models.Dto.Commentary
         [Required]
         public string Content { get; set; }
         public int? PostId { get; set; }
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
     }
 }

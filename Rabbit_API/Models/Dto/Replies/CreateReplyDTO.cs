@@ -8,6 +8,6 @@ namespace Rabbit_API.Models.Dto.Posts
         public string Content { get; set; }
         public int? ParentalCommentaryId { get; set; }
         public int? ChildCommentaryId { get; set; }
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
     }
 }

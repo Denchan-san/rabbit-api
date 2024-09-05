@@ -15,7 +15,7 @@ namespace Rabbit_API.Models.Dto.Posts
         public Models.Commentary? ChildCommentary { get; set; }
         public int? ChildCommentaryId { get; set; }
         //[ForeignKey("ChildUserId")]
-        public Models.LocalUser User { get; set; }
-        public int? UserId { get; set; }
+        public ApplicationUser? User { get; set; }
+        public string? UserId { get; set; }
     }
 }

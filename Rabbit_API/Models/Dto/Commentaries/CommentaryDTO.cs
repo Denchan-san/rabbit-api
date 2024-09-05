@@ -12,7 +12,7 @@ namespace Rabbit_API.Models.Dto.Commentary
         public Post? Post { get; set; }
         public int? PostId { get; set; }
         //[ForeignKey("Users")]
-        public LocalUser? User { get; set; }
-        public int? UserId { get; set; }
+        public ApplicationUser? User { get; set; }
+        public string? UserId { get; set; }
     }
 }

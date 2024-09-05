@@ -16,8 +16,8 @@ namespace Rabbit_API.Models
         public int? ThreadId { get; set; }
 
         //[ForeignKey("Users")]
-        public LocalUser? User { get; set; }
-        public int? UserId { get; set; }
+        public ApplicationUser? User { get; set; }
+        public string? UserId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 

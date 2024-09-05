@@ -5,7 +5,7 @@ namespace Rabbit_API.Models.Dto.Users
     public class UpdateUserDTO
     {
         [Required]
-        public int ID { get; set; }
+        public string ID { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

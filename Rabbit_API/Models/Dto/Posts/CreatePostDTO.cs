@@ -9,6 +9,6 @@ namespace Rabbit_API.Models.Dto.Posts
         [Required]
         public string Description { get; set; }
         public int? ThreadId { get; set; }
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
     }
 }

@@ -9,6 +9,6 @@ namespace Rabbit_API.Models.Dto.Threads
         [Required]
         public string Description { get; set; }
         public string? ImageUrl { get; set; } = "https://i.pinimg.com/736x/9f/6f/0d/9f6f0df5b26ddab4258cc55d2f3529c1.jpg";
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
     }
 }

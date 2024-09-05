@@ -9,7 +9,6 @@ namespace Rabbit_API.Data
         public DbSet<Models.Thread> Threads { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Commentary> Commentaries { get; set; }
-        public DbSet<LocalUser> LocalUsers { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Reply> Replies { get; set; }
 
