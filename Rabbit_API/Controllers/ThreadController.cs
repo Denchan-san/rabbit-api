@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Rabbit_API.Models;
 using Rabbit_API.Models.Dto.Threads;
@@ -7,6 +8,7 @@ using System.Net;
 
 namespace Rabbit_API.Controllers
 {
+    [EnableCors("AllowAngularApp")]
     [Route("api/Threads")]
     [ApiController]
     public class ThreadController : Controller
