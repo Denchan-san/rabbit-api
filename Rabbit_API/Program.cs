@@ -35,7 +35,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 builder.Services.AddScoped<IThreadRepository, ThreadRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentaryRepository, CommentaryRepository>();
-builder.Services.AddScoped<IReplyRepository, ReplyRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Automapper

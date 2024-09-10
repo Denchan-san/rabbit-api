@@ -13,6 +13,7 @@ namespace Rabbit_API.Models
         public int? PostId { get; set; }
         //[ForeignKey("Users")]
         public string? UserId { get; set; }
+        public int? CommentaryToId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
     }

@@ -24,10 +24,6 @@ namespace Rabbit_API
             CreateMap<Commentary, CreateCommentaryDTO>().ReverseMap();
             CreateMap<Commentary, UpdateCommentaryDTO>().ReverseMap();
 
-            CreateMap<Reply, ReplyDTO>().ReverseMap();
-            CreateMap<Reply, CreateReplyDTO>().ReverseMap();
-            CreateMap<Reply, UpdateReplyDTO>().ReverseMap();
-
             CreateMap<ApplicationUser, UserDTO>()
              .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
              .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.AvatarUrl));

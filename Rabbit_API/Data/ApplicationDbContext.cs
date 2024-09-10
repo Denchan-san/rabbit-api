@@ -10,7 +10,6 @@ namespace Rabbit_API.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Commentary> Commentaries { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Reply> Replies { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
