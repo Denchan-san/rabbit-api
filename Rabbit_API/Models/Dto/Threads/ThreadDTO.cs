@@ -11,7 +11,7 @@ namespace Rabbit_API.Models.Dto.Threads
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
-        public string? ImageUrl { get; set; }
+        public byte[]? Image { get; set; }
         public ApplicationUser? User { get; set; }
         public string? UserId { get; set; }
     }

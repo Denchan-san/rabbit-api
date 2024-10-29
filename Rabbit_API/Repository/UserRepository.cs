@@ -88,7 +88,7 @@ namespace Rabbit_API.Repository
                 NormalizedEmail = registrationRequestDTO.Email.ToUpper(),
                 NormalizedUserName = registrationRequestDTO.Email.ToUpper(), // Використовуйте нормалізований Email
                 Name = registrationRequestDTO.Name,
-                AvatarUrl = registrationRequestDTO.AvatarUrl
+                Avatar = registrationRequestDTO.Avatar
             };
 
 

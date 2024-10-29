@@ -26,7 +26,7 @@ namespace Rabbit_API
 
             CreateMap<ApplicationUser, UserDTO>()
              .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-             .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.AvatarUrl));
+             .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Avatar));
 
         }
     }

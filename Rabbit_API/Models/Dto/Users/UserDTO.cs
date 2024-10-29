@@ -5,7 +5,7 @@
         public string ID { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
-        public string AvatarUrl { get; set; }
+        public byte[] Avatar { get; set; }
 
     }
 }
